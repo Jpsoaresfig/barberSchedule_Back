@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class BarberUserDetailsService implements UserDetailsService {
 
     private final BarberRepository barberRepository;
 
@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return barberRepository.findByEmail(email)
             .map(barber -> new org.springframework.security.core.userdetails.User(
                 barber.getEmail(),
-                barber.getSenha(),
+                barber.getPassword(),
                 List.of(new SimpleGrantedAuthority(barber.getRole()))
             ))
             .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com email: " + email));

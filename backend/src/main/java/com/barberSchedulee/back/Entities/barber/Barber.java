@@ -14,20 +14,20 @@ public class Barber {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
-    private String telefone;
+    private String name;
+    private String phone;
     private String email;
-    private String senha;
+    private String password;
     private String role;
 
     public Barber() {
-        this.role = "ROLE_BARBER"; 
+        this.role = "ROLE_BARBER";
     }
 
-    public Barber(String nome, String email, String senha, String role) {
-        this.nome = nome;
+    public Barber(String name, String email, String password, String role) {
+        this.name = name;
         this.email = email;
-        this.senha = senha;
+        this.password = password;
         this.role = role;
     }
 }

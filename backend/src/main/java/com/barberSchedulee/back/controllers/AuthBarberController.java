@@ -1,6 +1,7 @@
 package com.barberSchedulee.back.controllers;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,37 +19,45 @@ import com.barberSchedulee.back.infra.security.TokenService;
 import jakarta.validation.Valid;
 
 import com.barberSchedulee.back.Repository.BarberRepository;
-import com.barberSchedulee.back.Entities.barber.Barber;
-
-import com.barberSchedulee.back.DTO.LoginDTO;
-import com.barberSchedulee.back.DTO.RegisterDTO;
 import com.barberSchedulee.back.DTO.TokenResponseDTO;
+import com.barberSchedulee.back.DTO.barberDTO.LoginBarberDTO;
+import com.barberSchedulee.back.DTO.barberDTO.RegisterBarberDTO;
+import com.barberSchedulee.back.Entities.barber.Barber;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth/barber")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthBarberController {
 
-    private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
     private final BarberRepository barberRepository;
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponseDTO> login(@RequestBody @Valid LoginDTO dto) {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.email(),
-                dto.senha());
+public ResponseEntity<TokenResponseDTO> login(@RequestBody @Valid LoginBarberDTO dto) {
+    var barber = barberRepository.findByEmail(dto.email())
+        .orElse(null);
 
-        Authentication authentication = authenticationManager.authenticate(authToken);
-        String token = tokenService.gerarToken((UserDetails) authentication.getPrincipal());
-
-        return ResponseEntity.ok(new TokenResponseDTO(token));
+    if (barber == null || !passwordEncoder.matches(dto.senha(), barber.getPassword())) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    
+    UserDetails userDetails = org.springframework.security.core.userdetails.User
+        .withUsername(barber.getEmail())
+        .password(barber.getPassword()) // hash
+        .authorities(new SimpleGrantedAuthority(barber.getRole()))
+        .build();
+
+    String token = tokenService.gerarToken(userDetails);
+
+    return ResponseEntity.ok(new TokenResponseDTO(token));
+}
+
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody @Valid RegisterDTO dto) {
+    public ResponseEntity<Void> register(@RequestBody @Valid RegisterBarberDTO dto) {
         if (barberRepository.findByEmail(dto.email()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
