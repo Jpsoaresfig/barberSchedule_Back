@@ -13,7 +13,6 @@ import com.barberSchedulee.back.Repository.CustomerRepository;
 import com.barberSchedulee.back.Repository.SchedulingRepository;
 import com.barberSchedulee.back.enums.Status;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
