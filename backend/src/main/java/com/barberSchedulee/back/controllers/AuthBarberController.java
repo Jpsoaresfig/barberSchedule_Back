@@ -47,7 +47,7 @@ public ResponseEntity<TokenResponseDTO> login(@RequestBody @Valid LoginBarberDTO
     
     UserDetails userDetails = org.springframework.security.core.userdetails.User
         .withUsername(barber.getEmail())
-        .password(barber.getPassword()) // hash
+        .password(barber.getPassword()) 
         .authorities(new SimpleGrantedAuthority(barber.getRole()))
         .build();
 
