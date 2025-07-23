@@ -35,6 +35,19 @@ public void register(RegisterCustomerDTO dto) {
     if (!customerRepository.findByPhone(dto.phone()).isEmpty()) {
         throw new IllegalArgumentException("Telefone já está em uso.");
     }
+    if (dto.password() == null || dto.password().isBlank()) {
+        throw new IllegalArgumentException("Senha não pode ser nula ou vazia.");
+    }
+    if (dto.name() == null || dto.name().isBlank()) {
+        throw new IllegalArgumentException("Nome é obrigatório.");
+    }
+    if (dto.phone() == null || dto.phone().isBlank()) {
+        throw new IllegalArgumentException("Telefone é obrigatório.");
+    }
+    if (dto.email() == null || dto.email().isBlank()) {
+        throw new IllegalArgumentException("Email é obrigatório.");
+    }
+    
 
     Customer novo = new Customer();
     novo.setName(dto.name());
