@@ -43,6 +43,13 @@ public class BarberService {
         if (!barberRepository.findByPhone(dto.telefone()).isEmpty()) {
             throw new IllegalArgumentException("Telefone já está em uso.");
         }
+        if (dto.nome() == null || dto.nome().isBlank()) {
+            throw new IllegalArgumentException("Nome é obrigatório.");
+        }
+        if (dto.email() == null || dto.email().isBlank()) {
+            throw new IllegalArgumentException("Email é obrigatório.");
+        }
+        
         Barber novo = new Barber();
         novo.setName(dto.nome());
         novo.setEmail(dto.email());

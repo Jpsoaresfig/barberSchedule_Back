@@ -27,9 +27,8 @@ public class AuthBarberController {
     private final PasswordEncoder passwordEncoder;
     private final BarberService barberService;
 
-
-     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody @Valid RegisterBarberDTO dto) {
+    @PostMapping("/register")
+    public ResponseEntity<Void> register(@RequestBody RegisterBarberDTO dto) {
         barberService.register(dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -37,17 +36,17 @@ public class AuthBarberController {
     @PostMapping("/login")
     public ResponseEntity<TokenResponseDTO> login(@RequestBody @Valid LoginBarberDTO dto) {
         var barber = barberRepository.findByEmail(dto.email())
-            .orElse(null);
+                .orElse(null);
 
         if (barber == null || !passwordEncoder.matches(dto.senha(), barber.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         var userDetails = User
-            .withUsername(barber.getEmail())
-            .password(barber.getPassword())
-            .authorities(new SimpleGrantedAuthority(barber.getRole()))
-            .build();
+                .withUsername(barber.getEmail())
+                .password(barber.getPassword())
+                .authorities(new SimpleGrantedAuthority(barber.getRole()))
+                .build();
 
         String token = tokenService.gerarToken(userDetails);
         return ResponseEntity.ok(new TokenResponseDTO(token));
