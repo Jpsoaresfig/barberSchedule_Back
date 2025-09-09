@@ -1,18 +1,17 @@
 package com.barberSchedulee.back.services.barberService;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.barberSchedulee.back.DTO.TokenResponseDTO;
 import com.barberSchedulee.back.DTO.barberDTO.LoginBarberDTO;
 import com.barberSchedulee.back.DTO.barberDTO.RegisterBarberDTO;
 import com.barberSchedulee.back.Entities.barber.Barber;
 import com.barberSchedulee.back.Repository.BarberRepository;
+import com.barberSchedulee.back.exceptions.exceptions.BarberInvalidPasswordException;
+import com.barberSchedulee.back.exceptions.exceptions.BarberUserNotFoundException;
 import com.barberSchedulee.back.infra.security.TokenService;
 
 import jakarta.transaction.Transactional;
@@ -49,7 +48,7 @@ public class BarberService {
         if (dto.email() == null || dto.email().isBlank()) {
             throw new IllegalArgumentException("Email é obrigatório.");
         }
-        
+
         Barber novo = new Barber();
         novo.setName(dto.nome());
         novo.setEmail(dto.email());
@@ -59,11 +58,12 @@ public class BarberService {
         barberRepository.save(novo);
     }
 
-    public ResponseEntity<TokenResponseDTO> login(LoginBarberDTO dto) {
-        var barber = barberRepository.findByEmail(dto.email()).orElse(null);
+    public String login(LoginBarberDTO dto) {
+        var barber = barberRepository.findByEmail(dto.email())
+                .orElseThrow(() -> new BarberUserNotFoundException("Usuário não encontrado"));
 
-        if (barber == null || !passwordEncoder.matches(dto.senha(), barber.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!passwordEncoder.matches(dto.senha(), barber.getPassword())) {
+            throw new BarberInvalidPasswordException("Senha incorreta");
         }
 
         UserDetails userDetails = User.builder()
@@ -72,7 +72,6 @@ public class BarberService {
                 .authorities(new SimpleGrantedAuthority(barber.getRole()))
                 .build();
 
-        String token = tokenService.gerarToken(userDetails);
-        return ResponseEntity.ok(new TokenResponseDTO(token));
+        return tokenService.gerarToken(userDetails);
     }
 }
