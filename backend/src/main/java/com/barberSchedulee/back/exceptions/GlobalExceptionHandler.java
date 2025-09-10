@@ -5,9 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.barberSchedulee.back.exceptions.exceptions.BarberConflictException;
-import com.barberSchedulee.back.exceptions.exceptions.BarberInvalidPasswordException;
-import com.barberSchedulee.back.exceptions.exceptions.BarberUserNotFoundException;
+import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberConflictException;
+import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberInvalidPasswordException;
+import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberUserNotFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

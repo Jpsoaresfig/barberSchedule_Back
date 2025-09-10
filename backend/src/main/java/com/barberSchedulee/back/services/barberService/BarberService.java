@@ -10,8 +10,8 @@ import com.barberSchedulee.back.DTO.barberDTO.LoginBarberDTO;
 import com.barberSchedulee.back.DTO.barberDTO.RegisterBarberDTO;
 import com.barberSchedulee.back.Entities.barber.Barber;
 import com.barberSchedulee.back.Repository.BarberRepository;
-import com.barberSchedulee.back.exceptions.exceptions.BarberInvalidPasswordException;
-import com.barberSchedulee.back.exceptions.exceptions.BarberUserNotFoundException;
+import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberInvalidPasswordException;
+import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberUserNotFoundException;
 import com.barberSchedulee.back.infra.security.TokenService;
 
 import jakarta.transaction.Transactional;

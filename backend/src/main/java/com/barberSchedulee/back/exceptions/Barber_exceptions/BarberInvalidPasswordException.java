@@ -1,4 +1,4 @@
-package com.barberSchedulee.back.exceptions.exceptions;
+package com.barberSchedulee.back.exceptions.Barber_exceptions;
 
 public class BarberInvalidPasswordException extends RuntimeException {
     public BarberInvalidPasswordException(String message) {
