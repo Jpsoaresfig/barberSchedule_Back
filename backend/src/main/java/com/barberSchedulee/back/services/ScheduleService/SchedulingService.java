@@ -12,6 +12,9 @@ import com.barberSchedulee.back.Repository.BarberRepository;
 import com.barberSchedulee.back.Repository.CustomerRepository;
 import com.barberSchedulee.back.Repository.SchedulingRepository;
 import com.barberSchedulee.back.enums.Status;
+import com.barberSchedulee.back.exceptions.Schedule_exceptions.ScheduleDoesntExistBarberException;
+import com.barberSchedulee.back.exceptions.Schedule_exceptions.ScheduleDoesntExistCustomerException;
+import com.barberSchedulee.back.exceptions.Schedule_exceptions.ScheduleSameTimeException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,15 +32,15 @@ public class SchedulingService {
         LocalTime time = LocalTime.parse(dto.time());
 
         if (schedulingRepo.existsByBarberIdAndDateAndTime(dto.barberId(), date, time)) {
-            throw new IllegalArgumentException("Já existe um agendamento para este barbeiro na data e hora informadas.");
+            throw new ScheduleSameTimeException("Já existe um agendamento para este barbeiro na data e hora informadas.");
         }
 
 
         Barber barber = barberRepo.findById(dto.barberId())
-            .orElseThrow(() -> new IllegalArgumentException("Barber não encontrado"));
+            .orElseThrow(() -> new ScheduleDoesntExistBarberException("Barber não encontrado"));
 
         Customer customer = customerRepo.findById(dto.customerId())
-            .orElseThrow(() -> new IllegalArgumentException("Customer não encontrado"));
+            .orElseThrow(() -> new ScheduleDoesntExistCustomerException("Customer não encontrado"));
 
         Status status = Status.valueOf(dto.status().toUpperCase());
 

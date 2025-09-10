@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.barberSchedulee.back.DTO.TokenResponseDTO;
 import com.barberSchedulee.back.DTO.barberDTO.LoginBarberDTO;
 import com.barberSchedulee.back.DTO.barberDTO.RegisterBarberDTO;
 import com.barberSchedulee.back.Entities.barber.Barber;
@@ -41,10 +42,10 @@ public class BarberService {
         }
 
         if (!barberRepository.findByPhone(dto.telefone()).isEmpty()) {
-            throw new IllegalArgumentException("Telefone já está em uso.");
+            throw new BarberInvalidDataException("Telefone já está em uso.");
         }
         if (dto.nome() == null || dto.nome().isBlank()) {
-            throw new IllegalArgumentException("Nome é obrigatório.");
+            throw new BarberInvalidDataException("Nome é obrigatório.");
         }
         if (dto.email() == null || dto.email().isBlank()) {
             throw new BarberInvalidDataException("Email é obrigatório.");
@@ -59,7 +60,7 @@ public class BarberService {
         barberRepository.save(novo);
     }
 
-    public String login(LoginBarberDTO dto) {
+    public TokenResponseDTO login(LoginBarberDTO dto) {
         var barber = barberRepository.findByEmail(dto.email())
                 .orElseThrow(() -> new BarberEmailException("Usuário não encontrado"));
 
@@ -73,6 +74,8 @@ public class BarberService {
                 .authorities(new SimpleGrantedAuthority(barber.getRole()))
                 .build();
 
-        return tokenService.gerarToken(userDetails);
+        String token = tokenService.gerarToken(userDetails);
+
+        return new TokenResponseDTO(token);
     }
 }

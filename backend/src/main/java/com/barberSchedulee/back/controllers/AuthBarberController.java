@@ -5,16 +5,13 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
-
 import com.barberSchedulee.back.services.barberService.BarberService;
 import com.barberSchedulee.back.DTO.TokenResponseDTO;
 import com.barberSchedulee.back.DTO.barberDTO.LoginBarberDTO;
 import com.barberSchedulee.back.DTO.barberDTO.RegisterBarberDTO;
 
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 
 @RestController
 @RequestMapping("/auth/barber")
@@ -31,7 +28,7 @@ public class AuthBarberController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponseDTO> login(@RequestBody @Valid LoginBarberDTO dto) {
-        String token = barberService.login(dto);
-        return ResponseEntity.ok(new TokenResponseDTO(token));
+        TokenResponseDTO tokenResponse = barberService.login(dto);
+        return ResponseEntity.ok(tokenResponse);
     }
 }

@@ -4,16 +4,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-
+import com.barberSchedulee.back.DTO.TokenResponseDTO;
+import com.barberSchedulee.back.DTO.barberDTO.LoginBarberDTO;
 import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberEmailException;
 import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberInvalidPasswordException;
 
+import jakarta.validation.Valid;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-    
 
     @ExceptionHandler(BarberInvalidPasswordException.class)
     public ResponseEntity<String> handleInvalidPassword(BarberInvalidPasswordException ex) {
@@ -33,6 +35,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneric(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                             .body("Ocorreu um erro inesperado: " + ex.getMessage());
+                .body("Ocorreu um erro inesperado: " + ex.getMessage());
     }
 }
