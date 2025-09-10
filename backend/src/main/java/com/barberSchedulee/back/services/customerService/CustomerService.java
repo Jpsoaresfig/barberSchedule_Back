@@ -11,10 +11,9 @@ import com.barberSchedulee.back.DTO.customerDTO.LoginCustomerDTO;
 import com.barberSchedulee.back.DTO.customerDTO.RegisterCustomerDTO;
 import com.barberSchedulee.back.Entities.customer.Customer;
 import com.barberSchedulee.back.Repository.CustomerRepository;
-import com.barberSchedulee.back.exceptions.Customer_exceptions.EmailAlreadyUsedException;
-import com.barberSchedulee.back.exceptions.Customer_exceptions.InvalidCredentialsException;
-import com.barberSchedulee.back.exceptions.Customer_exceptions.InvalidCustomerDataException;
-import com.barberSchedulee.back.exceptions.Customer_exceptions.PhoneAlreadyUsedException;
+import com.barberSchedulee.back.exceptions.Customer_exceptions.CustomersInvalidEmailException;
+import com.barberSchedulee.back.exceptions.Customer_exceptions.CustomersInvalidDataException;
+import com.barberSchedulee.back.exceptions.Customer_exceptions.CustomersInvalidPasswordException;
 import com.barberSchedulee.back.infra.security.TokenService;
 
 import jakarta.transaction.Transactional;
@@ -31,22 +30,22 @@ public class CustomerService {
     @Transactional
     public void register(RegisterCustomerDTO dto) {
         if (!customerRepository.findByEmail(dto.email()).isEmpty()) {
-            throw new EmailAlreadyUsedException("Email já está em uso.");
+            throw new CustomersInvalidEmailException("Email já está em uso.");
         }
         if (!customerRepository.findByPhone(dto.phone()).isEmpty()) {
-            throw new PhoneAlreadyUsedException("Telefone já está em uso.");
+            throw new CustomersInvalidDataException("Telefone já está em uso.");
         }
         if (dto.password() == null || dto.password().isBlank()) {
-            throw new InvalidCustomerDataException("Senha não pode ser nula ou vazia.");
+            throw new CustomersInvalidDataException("Senha não pode ser nula ou vazia.");
         }
         if (dto.name() == null || dto.name().isBlank()) {
-            throw new InvalidCustomerDataException("Nome é obrigatório.");
+            throw new CustomersInvalidDataException("Nome é obrigatório.");
         }
         if (dto.phone() == null || dto.phone().isBlank()) {
-            throw new InvalidCustomerDataException("Telefone é obrigatório.");
+            throw new CustomersInvalidDataException("Telefone é obrigatório.");
         }
         if (dto.email() == null || dto.email().isBlank()) {
-            throw new InvalidCustomerDataException("Email é obrigatório.");
+            throw new CustomersInvalidDataException("Email é obrigatório.");
         }
 
         Customer novo = new Customer();
@@ -59,12 +58,12 @@ public class CustomerService {
         customerRepository.save(novo);
     }
 
-    public TokenResponseDTO login(LoginCustomerDTO dto) throws InvalidCredentialsException {
+    public TokenResponseDTO login(LoginCustomerDTO dto) throws CustomersInvalidDataException {
         Customer customer = customerRepository.findByEmail(dto.email())
-                .orElseThrow(() -> new InvalidCredentialsException("Email incorreto"));
+                .orElseThrow(() -> new CustomersInvalidEmailException("Email incorreto"));
 
         if (!passwordEncoder.matches(dto.password(), customer.getPassword())) {
-            throw new InvalidCredentialsException("senha incorretos");
+            throw new CustomersInvalidPasswordException("senha incorretos");
         }
 
         UserDetails userDetails = User.builder()

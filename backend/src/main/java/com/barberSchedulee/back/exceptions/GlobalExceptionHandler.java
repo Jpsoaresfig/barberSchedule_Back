@@ -5,25 +5,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberConflictException;
+
+import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberEmailException;
 import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberInvalidPasswordException;
-import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberUserNotFoundException;
+
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BarberUserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFound(BarberUserNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
+    
 
     @ExceptionHandler(BarberInvalidPasswordException.class)
     public ResponseEntity<String> handleInvalidPassword(BarberInvalidPasswordException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 
-    @ExceptionHandler(BarberConflictException.class)
-    public ResponseEntity<String> handleConflict(BarberConflictException ex) {
+    @ExceptionHandler(BarberEmailException.class)
+    public ResponseEntity<String> handleConflict(BarberEmailException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 

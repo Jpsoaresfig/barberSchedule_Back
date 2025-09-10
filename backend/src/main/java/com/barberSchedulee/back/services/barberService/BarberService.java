@@ -10,8 +10,9 @@ import com.barberSchedulee.back.DTO.barberDTO.LoginBarberDTO;
 import com.barberSchedulee.back.DTO.barberDTO.RegisterBarberDTO;
 import com.barberSchedulee.back.Entities.barber.Barber;
 import com.barberSchedulee.back.Repository.BarberRepository;
+import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberEmailException;
+import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberInvalidDataException;
 import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberInvalidPasswordException;
-import com.barberSchedulee.back.exceptions.Barber_exceptions.BarberUserNotFoundException;
 import com.barberSchedulee.back.infra.security.TokenService;
 
 import jakarta.transaction.Transactional;
@@ -28,15 +29,15 @@ public class BarberService {
     @Transactional
     public void register(RegisterBarberDTO dto) {
         if (barberRepository.findByEmail(dto.email()).isPresent()) {
-            throw new IllegalArgumentException("Email já está em uso.");
+            throw new BarberEmailException("Email já está em uso");
         }
 
         if (dto.senha() == null || dto.senha().isBlank()) {
-            throw new IllegalArgumentException("Senha não pode ser nula ou vazia.");
+            throw new BarberInvalidDataException("Senha não pode ser nula ou vazia.");
         }
 
         if (dto.telefone() == null || dto.telefone().isBlank()) {
-            throw new IllegalArgumentException("Telefone é obrigatório.");
+            throw new BarberInvalidDataException("Telefone é obrigatório.");
         }
 
         if (!barberRepository.findByPhone(dto.telefone()).isEmpty()) {
@@ -46,7 +47,7 @@ public class BarberService {
             throw new IllegalArgumentException("Nome é obrigatório.");
         }
         if (dto.email() == null || dto.email().isBlank()) {
-            throw new IllegalArgumentException("Email é obrigatório.");
+            throw new BarberInvalidDataException("Email é obrigatório.");
         }
 
         Barber novo = new Barber();
@@ -60,7 +61,7 @@ public class BarberService {
 
     public String login(LoginBarberDTO dto) {
         var barber = barberRepository.findByEmail(dto.email())
-                .orElseThrow(() -> new BarberUserNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new BarberEmailException("Usuário não encontrado"));
 
         if (!passwordEncoder.matches(dto.senha(), barber.getPassword())) {
             throw new BarberInvalidPasswordException("Senha incorreta");

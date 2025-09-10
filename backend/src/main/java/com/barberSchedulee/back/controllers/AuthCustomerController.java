@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.barberSchedulee.back.DTO.TokenResponseDTO;
 import com.barberSchedulee.back.DTO.customerDTO.LoginCustomerDTO;
 import com.barberSchedulee.back.DTO.customerDTO.RegisterCustomerDTO;
-import com.barberSchedulee.back.exceptions.Customer_exceptions.InvalidCredentialsException;
+import com.barberSchedulee.back.exceptions.Customer_exceptions.CustomersInvalidDataException;
 import com.barberSchedulee.back.services.customerService.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class AuthCustomerController {
     }
 
     @PostMapping("/login")
-    public TokenResponseDTO login(@RequestBody @Valid LoginCustomerDTO dto) throws InvalidCredentialsException {
+    public TokenResponseDTO login(@RequestBody @Valid LoginCustomerDTO dto) throws CustomersInvalidDataException {
         return customerService.login(dto);
     }
 
